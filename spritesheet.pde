@@ -1,4 +1,6 @@
-public class SpriteSheet {
+// Spritesheet class that uses Surfaces
+public final class SpriteSheet {
+
 	private String filePath;
 
 	private Surface SHEET;
@@ -16,7 +18,7 @@ public class SpriteSheet {
 		PImage sheetImage = loadImage(filePath);
 		SHEET = surfaceImage(sheetImage);
 
-		// Divide PImage up into Surfaces 
+		// Divide PImage up into Surfaces
 		Surface regionFromSheet = new Surface(spriteW, spriteH);
 		for (int y=0; y < SHEET.Height()/spriteH; y++) {
 			for (int x=0; x < SHEET.Width()/spriteW; x++) {
@@ -31,7 +33,7 @@ public class SpriteSheet {
 		return SPRITES.get(index);
 	}
 
-	// Read only attribute
+	// Read only attributes
 	public String Path() {
 		return filePath;
 	}

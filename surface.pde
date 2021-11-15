@@ -1,3 +1,4 @@
+// Surface class
 public final class Surface {
 
 	// Use getters
@@ -36,16 +37,6 @@ public final class Surface {
 		return retSurf;
 	}
 
-	public void Clear() {
-		color fullTransparent = color(0, 0, 0, 0);
-
-		for (int y=0; y < h; y++) {
-			for (int x=0; x < w; x++) {
-				this.Set(x, y, fullTransparent);
-			}
-		}
-	}
-
 	// Fill the surface pixels with one colour
 	public void Fill(color fillC) {
 		for (int y=0; y < h; y++) {
@@ -54,6 +45,12 @@ public final class Surface {
 			}
 		}
 	}
+
+	// Set all pixels to full transparency
+	public void Clear() {
+		this.Fill(color(0, 0, 0, 0));
+	}
+
 
 	public void Line(int x1, int y1, int x2, int y2, int thickness, color lineC) {
 		int fullDist = int(dist(x1, y1, x2, y2));
