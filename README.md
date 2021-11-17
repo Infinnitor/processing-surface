@@ -40,6 +40,9 @@ A simple implementation of a pixelarray surface into Processing
 #### void SetAlpha(int a)
 	Set the alpha for every pixel in the Surface to the given value
 
+### void ShiftAlpha(int a)
+	Change the alpha for every pixel in the Surface by the given value
+
 #### void SetColourKey(color c)
 	Set every pixel that matches the given to color to full transparency
 
