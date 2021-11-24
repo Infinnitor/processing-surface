@@ -128,6 +128,22 @@ public final class Surface {
 		}
 	}
 
+	public void ShiftAlpha(int changeAmt) {
+		for (int y=0; y < h; y++) {
+			for (int x=0; x < w; x++) {
+				color pixelGet = this.Get(x, y);
+
+				// Bitwise stuff
+				// It's cool
+				float r = pixelGet >> 16 & 0xFF;
+				float g = pixelGet >> 8 & 0xFF;
+				float b = pixelGet & 0xFF;
+
+				this.Set(x, y, color(int(r), int(g), int(b), alpha(pixelGet) + changeAmt));
+			}
+		}
+	}
+
 	// Set all pixels that match the colourKey argument to transparency
 	public void SetColourKey(color colourKey) {
 		color fullTransparent = color(0, 0, 0, 0);
