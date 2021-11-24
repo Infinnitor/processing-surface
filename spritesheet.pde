@@ -1,8 +1,4 @@
-// Spritesheet class that uses Surfaces
 public final class SpriteSheet {
-
-	private String filePath;
-
 	private Surface SHEET;
 	private ArrayList<Surface> SPRITES = new ArrayList<Surface>();
 
@@ -10,13 +6,11 @@ public final class SpriteSheet {
 	private int w;
 	private int h;
 
-	public SpriteSheet(String sheetPath, int spriteW, int spriteH) {
-		filePath = sheetPath;
+	public SpriteSheet(Surface sheetImage, int spriteW, int spriteH) {
 		w = spriteW;
 		h = spriteH;
 
-		PImage sheetImage = loadImage(filePath);
-		SHEET = surfaceImage(sheetImage);
+		SHEET = sheetImage;
 
 		// Divide PImage up into Surfaces
 		Surface regionFromSheet = new Surface(spriteW, spriteH);
@@ -29,14 +23,14 @@ public final class SpriteSheet {
 		}
 	}
 
+	public SpriteSheet Copy() {
+		return new SpriteSheet(this.SHEET, this.w, this.h);
+	}
+
 	public Surface Get(int index) {
 		return SPRITES.get(index);
 	}
 
-	// Read only attributes
-	public String Path() {
-		return filePath;
-	}
 
 	public int Width() {
 		return this.w;
