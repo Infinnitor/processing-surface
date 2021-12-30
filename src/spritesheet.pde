@@ -42,11 +42,11 @@ public final class SpriteSheet {
 }
 
 
-SpriteSheet spritesheetFromPath(String p, int w, int h) {
+public SpriteSheet spritesheetFromPath(String p, int w, int h) {
 	return new SpriteSheet(loadImage(p), w, h);
 }
 
 
-SpriteSheet spriteSheetFromSurface(Surface s, int w, int h) {
+public SpriteSheet spriteSheetFromSurface(Surface s, int w, int h) {
 	return new SpriteSheet(s.GetImage(), w, h);
 }
