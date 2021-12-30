@@ -16,7 +16,7 @@ public final class SpriteSheet {
 		h = spriteH;
 
 		PImage sheetImage = loadImage(filePath);
-		SHEET = surfaceImage(sheetImage);
+		SHEET = surfaceFromImage(sheetImage);
 
 		// Divide PImage up into Surfaces
 		Surface regionFromSheet = new Surface(spriteW, spriteH);

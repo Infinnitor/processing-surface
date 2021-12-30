@@ -12,12 +12,19 @@ public final class Surface {
 		CONTENT = createImage(w, h, ARGB);
 	}
 
+	private int Loc(int x, int y) {
+		return (y*w) + x;
+	}
+
 	// Return colour at given position
+	// This function is slow to use, avoid using it for getting many pixels
+	// Use Surface.GetImage().pixels[] instead
 	public color Get(int x, int y) {
 		return CONTENT.get(x, y);
 	}
 
 	// Set colour at a given position
+	// This function is slow to use, avoid using it for setting many pixels
 	public void Set(int x, int y, color setC) {
 		CONTENT.set(x, y, setC);
 	}
@@ -39,11 +46,16 @@ public final class Surface {
 
 	// Fill the surface pixels with one colour
 	public void Fill(color fillC) {
+		CONTENT.loadPixels();
+
 		for (int y=0; y < h; y++) {
 			for (int x=0; x < w; x++) {
-				this.Set(x, y, fillC);
+				// this.Set(x, y, fillC);
+				CONTENT.pixels[Loc(x, y)] = fillC;
 			}
 		}
+		CONTENT.updatePixels();
+
 	}
 
 	// Set all pixels to full transparency
@@ -52,6 +64,7 @@ public final class Surface {
 	}
 
 
+	// This function is kinda working maybe
 	public void Line(int x1, int y1, int x2, int y2, int thickness, color lineC) {
 		int fullDist = int(dist(x1, y1, x2, y2));
 		float angleTo = atan2(y2-y1, x2-x1);
@@ -67,14 +80,17 @@ public final class Surface {
 
 	// Draw a rectangle to the surface pixels
 	public void Rect(int rX, int rY, int rW, int rH, color rectC) {
+		CONTENT.loadPixels();
 		for (int y=0; y < rH; y++) {
 			for (int x=0; x < rW; x++) {
-				this.Set(x+rX, y+rY, rectC);
+				if (x > w || y > h) { continue; }
+				CONTENT.pixels[Loc(x+rX, y+rY)] = rectC;
 			}
 		}
+		CONTENT.updatePixels();
 	}
 
-	// This function is unoptimized do not use it please!!!!!!!!
+	// This function is unoptimized so maybe dont use it
 	public void Circle(int cX, int cY, int r, color circleFill) {
 		for (int a=0; a < 360; a++) {
 			int x2 = cX + int(cos(radians(a)) * r);
@@ -85,21 +101,29 @@ public final class Surface {
 	}
 
 	// Given a PImage, blit its pixels to the surface pixels
-	public void Blit(PImage blitImg, int blitX, int blitY) {
+	public void Blit(PImage blitImg, int blitX, int blitY, boolean... centered) { // Use boolean varargs for centered to make it optional
+		boolean offsetCenter = (centered.length > 0) ? (centered[0] == true) : false;
+		blitX = (offsetCenter) ? blitX - blitImg.width/2 : blitX;
+		blitY = (offsetCenter) ? blitY - blitImg.height/2 : blitY;
+
+		CONTENT.loadPixels();
 		for (int y=0; y < blitImg.height; y++) {
 			for (int x=0; x < blitImg.width; x++) {
 				if (alpha(blitImg.get(x, y)) == 0) {
 					continue;
 				}
 
-				this.Set(x+blitX, y+blitY, blitImg.get(x, y));
+				CONTENT.pixels[Loc(x+blitX, y+blitY)] = blitImg.get(x, y);
+				// this.Set(x+blitX, y+blitY, blitImg.get(x, y));
 			}
 		}
+		CONTENT.updatePixels();
 	}
 
 	// Given another Surface, blit its pixels to the surface pixels
-	public void SurfBlit(Surface blitSurf, int blitX, int blitY) {
-		this.Blit(blitSurf.GetImage(), blitX, blitY); // Use Surface.Blit() to avoid repetition
+	public void SurfBlit(Surface blitSurf, int blitX, int blitY, boolean... centered) {
+		boolean offsetCenter = (centered.length > 0) ? (centered[0] == true) : false;
+		this.Blit(blitSurf.GetImage(), blitX, blitY, offsetCenter); // Use Surface.Blit() to avoid repetition
 	}
 
 	// Display the surface to the screen
@@ -108,11 +132,13 @@ public final class Surface {
 	}
 
 	// Display the surface to the screen, from its center
-	public void DisplayCenter(int x, int y) {
+	public void DisplayCentered(int x, int y) {
 		image(CONTENT, x - (w/2), y - (h/2));
 	}
 
 	public void SetAlpha(int newAlpha) {
+		CONTENT.loadPixels();
+
 		for (int y=0; y < h; y++) {
 			for (int x=0; x < w; x++) {
 				color pixelGet = this.Get(x, y);
@@ -123,12 +149,17 @@ public final class Surface {
 				float g = pixelGet >> 8 & 0xFF;
 				float b = pixelGet & 0xFF;
 
-				this.Set(x, y, color(int(r), int(g), int(b), newAlpha));
+				CONTENT.pixels[Loc(x, y)] = color(int(r), int(g), int(b), newAlpha);
+				// this.Set(x, y, color(int(r), int(g), int(b), newAlpha));
 			}
 		}
+		CONTENT.updatePixels();
+
 	}
 
 	public void ShiftAlpha(int changeAmt) {
+		CONTENT.loadPixels();
+
 		for (int y=0; y < h; y++) {
 			for (int x=0; x < w; x++) {
 				color pixelGet = this.Get(x, y);
@@ -139,22 +170,27 @@ public final class Surface {
 				float g = pixelGet >> 8 & 0xFF;
 				float b = pixelGet & 0xFF;
 
-				this.Set(x, y, color(int(r), int(g), int(b), alpha(pixelGet) + changeAmt));
+				CONTENT.pixels[Loc(x, y)] = color(int(r), int(g), int(b), alpha(pixelGet) + changeAmt);
+				// this.Set(x, y, color(int(r), int(g), int(b), alpha(pixelGet) + changeAmt));
 			}
 		}
+		CONTENT.updatePixels();
 	}
 
 	// Set all pixels that match the colourKey argument to transparency
 	public void SetColourKey(color colourKey) {
 		color fullTransparent = color(0, 0, 0, 0);
+		CONTENT.loadPixels();
 
 		for (int y=0; y < h; y++) {
 			for (int x=0; x < w; x++) {
-				if (this.Get(x, y) == colourKey) {
-					this.Set(x, y, fullTransparent);
+				if (CONTENT.pixels[Loc(x, y)] == colourKey) {
+					CONTENT.pixels[Loc(x, y)] = fullTransparent;
+					// this.Set(x, y, fullTransparent);
 				}
 			}
 		}
+		CONTENT.updatePixels();
 	}
 
 	// Access method for the surface PImage
@@ -215,7 +251,7 @@ public Surface surface(int w, int h) {
 }
 
 // Function for making a new Surface from an image
-public Surface surfaceImage(PImage img) {
+public Surface surfaceFromImage(PImage img) {
 	Surface retSurf = new Surface(img.width, img.height);
 	retSurf.Blit(img, 0, 0);
 	return retSurf;

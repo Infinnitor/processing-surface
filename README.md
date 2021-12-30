@@ -1,10 +1,11 @@
 # processing-surface
-A simple implementation of a pixelarray surface into Processing
+A wrapper for Processing's PImage that aims to make editing PImages easier
+Also comes with a Spritesheet class for storing multiple surfaces
 
 
-# Surface methods
+# Methods for the Surface
 
-#### Constructor(int width, int height)
+#### Surface Constructor(int width, int height)
 	Initialise Surface pixelarray with given size
 
 #### color Get(int x, int y)
