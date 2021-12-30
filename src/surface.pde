@@ -83,7 +83,8 @@ public final class Surface {
 		CONTENT.loadPixels();
 		for (int y=0; y < rH; y++) {
 			for (int x=0; x < rW; x++) {
-				if (x > w || y > h) { continue; }
+				if (x+rX < 0 || y+rY < 0) { continue; }
+				if (x+rX >= w || y+rY >= h) { continue; }
 				CONTENT.pixels[Loc(x+rX, y+rY)] = rectC;
 			}
 		}
@@ -112,6 +113,8 @@ public final class Surface {
 				if (alpha(blitImg.get(x, y)) == 0) {
 					continue;
 				}
+				if (x+blitX < 0 || y+blitY < 0) { continue; }
+				if (x+blitX >= w || y+blitY >= h) { continue; }
 
 				CONTENT.pixels[Loc(x+blitX, y+blitY)] = blitImg.get(x, y);
 				// this.Set(x+blitX, y+blitY, blitImg.get(x, y));
@@ -132,7 +135,7 @@ public final class Surface {
 	}
 
 	// Display the surface to the screen, from its center
-	public void DisplayCentered(int x, int y) {
+	public void DisplayCenter(int x, int y) {
 		image(CONTENT, x - (w/2), y - (h/2));
 	}
 
