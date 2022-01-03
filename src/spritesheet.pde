@@ -39,6 +39,10 @@ public final class SpriteSheet {
 	public int Height() {
 		return this.h;
 	}
+
+	public int Length() {
+		return SPRITES.size();
+	}
 }
 
 
